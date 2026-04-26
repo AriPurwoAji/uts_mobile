@@ -74,6 +74,22 @@ class AuthRepositoryImpl {
     await SecureStorage.saveToken(accessToken);
   }
 
+  Future<void> verifyAfterEmailVerified() async {
+  final user = _firebaseAuth.currentUser;
+
+  if (user == null) {
+    throw Exception('User tidak ditemukan');
+  }
+
+  await user.reload();
+
+  if (!user.emailVerified) {
+    throw Exception('Email belum diverifikasi');
+  }
+
+  await _verifyTokenToBackend();
+}
+
   // Logout
   Future<void> logout() async {
     await _firebaseAuth.signOut();

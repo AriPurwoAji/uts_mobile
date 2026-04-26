@@ -29,7 +29,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       final verified = await _authRepo.checkEmailVerified();
       if (verified && mounted) {
         _timer?.cancel();
-        await _authRepo.loginAfterVerification();
+        await _authRepo.verifyAfterEmailVerified();
         if (mounted) {
           context.read<AuthProvider>().setAuthenticated();
           Navigator.pushReplacement(
