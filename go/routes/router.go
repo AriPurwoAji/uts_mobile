@@ -36,6 +36,8 @@ func SetupRouter() *gin.Engine {
 			})
 		})
 
+		v1.GET("/public/products", productHandler.GetAll)
+
 		// Auth routes (public)
 		auth := v1.Group("/auth")
 		{
