@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../providers/auth_provider.dart';
+import '../providers/auth_providers.dart';
 import 'verify_email_page.dart';
 import 'login_page.dart';
 

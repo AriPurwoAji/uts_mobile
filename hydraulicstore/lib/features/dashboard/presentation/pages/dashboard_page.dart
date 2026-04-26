@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../auth/presentation/pages/login_page.dart';
-import '../providers/product_provider.dart';
+import '../providers/product_providers.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});

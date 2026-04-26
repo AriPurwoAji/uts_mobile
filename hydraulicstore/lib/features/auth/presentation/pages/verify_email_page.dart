@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../providers/auth_provider.dart';
+import '../providers/auth_providers.dart';
 import 'login_page.dart';
 import '../../data/auth_repository_impl.dart';
 import '../../../dashboard/presentation/pages/dashboard_page.dart';
