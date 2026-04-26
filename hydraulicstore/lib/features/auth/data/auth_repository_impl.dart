@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../../../core/services/dio_client.dart';
+import '../../../core/services/dio_clients.dart';
 import '../../../core/services/secure_storage.dart';
 import '../../../core/constants/api_constants.dart';
 
