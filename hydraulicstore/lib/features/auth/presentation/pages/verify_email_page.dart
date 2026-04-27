@@ -5,7 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../providers/auth_providers.dart';
 import 'login_page.dart';
 import '../../data/auth_repository_impl.dart';
-import '../../../dashboard/presentation/pages/dashboard_page.dart';
+import '../../../dashboard/presentation/pages/home_page.dart';
 
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({super.key});

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../providers/auth_providers.dart';
-import '../../../dashboard/presentation/pages/dashboard_page.dart';
+import '../../../dashboard/presentation/pages/home_page.dart';
 import 'register_page.dart';
 import 'verify_email_page.dart';
 

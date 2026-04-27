@@ -49,9 +49,25 @@ class AuthRepositoryImpl {
     await _verifyTokenToBackend();
   }
 
+  Future<void> loginAfterVerification() async {
+    final user = _firebaseAuth.currentUser;
+
+    if (user == null) {
+      throw Exception("User belum login");
+    }
+
+    // ambil token (ini yang nanti dipakai ke backend)
+    final token = await user.getIdToken();
+    print("TOKEN: $token");
+
+    // kalau mau kirim ke backend → di sini tempatnya
+  }
+
   // Cek apakah email sudah diverifikasi
   Future<bool> checkEmailVerified() async {
-    await _firebaseAuth.currentUser?.reload();
+    final user = _firebaseAuth.currentUser;
+    await user?.reload(); // penting!
+
     return _firebaseAuth.currentUser?.emailVerified ?? false;
   }
 
@@ -63,32 +79,41 @@ class AuthRepositoryImpl {
   // Verifikasi token ke backend
   Future<void> _verifyTokenToBackend() async {
     final idToken = await _firebaseAuth.currentUser?.getIdToken();
+    print("STEP 1: TOKEN ADA");
+
     if (idToken == null) throw Exception('Gagal mendapatkan Firebase token');
+
+    print("STEP 2: KIRIM KE BACKEND");
 
     final response = await DioClient.instance.post(
       ApiConstants.verifyToken,
       data: {'firebase_token': idToken},
     );
 
+    print("STEP 3: RESPONSE MASUK");
+    print(response.data);
+
     final accessToken = response.data['data']['access_token'];
     await SecureStorage.saveToken(accessToken);
+
+    print("STEP 4: SELESAI");
   }
 
   Future<void> verifyAfterEmailVerified() async {
-  final user = _firebaseAuth.currentUser;
+    final user = _firebaseAuth.currentUser;
 
-  if (user == null) {
-    throw Exception('User tidak ditemukan');
+    if (user == null) {
+      throw Exception('User tidak ditemukan');
+    }
+
+    await user.reload();
+
+    if (!user.emailVerified) {
+      throw Exception('Email belum diverifikasi');
+    }
+
+    await _verifyTokenToBackend();
   }
-
-  await user.reload();
-
-  if (!user.emailVerified) {
-    throw Exception('Email belum diverifikasi');
-  }
-
-  await _verifyTokenToBackend();
-}
 
   // Logout
   Future<void> logout() async {
