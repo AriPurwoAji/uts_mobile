@@ -33,7 +33,7 @@ func (s *ProductService) Create(req *models.CreateProductRequest) (*models.Produ
 		Description: req.Description,
 		Price:       req.Price,
 		Stock:       req.Stock,
-		Category:    req.Category,
+		CategoryID:  req.CategoryID,
 		ImageURL:    req.ImageURL,
 	}
 	err := s.productRepo.Create(product)
@@ -50,7 +50,7 @@ func (s *ProductService) Update(id uint, req *models.UpdateProductRequest) (*mod
 	if req.Description != nil { product.Description = *req.Description }
 	if req.Price != nil       { product.Price = *req.Price }
 	if req.Stock != nil       { product.Stock = *req.Stock }
-	if req.Category != nil    { product.Category = *req.Category }
+	if req.CategoryID != nil  { product.CategoryID = *req.CategoryID }
 	if req.ImageURL != nil    { product.ImageURL = *req.ImageURL }
 
 	err = s.productRepo.Update(product)
