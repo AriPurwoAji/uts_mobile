@@ -9,7 +9,6 @@ import (
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
-	// CORS Middleware
 	r.Use(func(c *gin.Context) {
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
@@ -22,45 +21,58 @@ func SetupRouter() *gin.Engine {
 	})
 
 	// Init handlers
-	authHandler := handlers.NewAuthHandler()
-	productHandler := handlers.NewProductHandler()
+	authHandler     := handlers.NewAuthHandler()
+	productHandler  := handlers.NewProductHandler()
+	categoryHandler := handlers.NewCategoryHandler()
+	cartHandler     := handlers.NewCartHandler()
+	orderHandler    := handlers.NewOrderHandler()
 
-	// API v1 group
 	v1 := r.Group("/v1")
 	{
-		// Health check
 		v1.GET("/health", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"status":  "ok",
-				"service": "gin-firebase-backend",
-			})
+			c.JSON(200, gin.H{"status": "ok", "service": "hydrau-link-be"})
 		})
 
-		v1.GET("/public/products", productHandler.GetAll)
-
-		// Auth routes (public)
+		// Auth (public)
 		auth := v1.Group("/auth")
 		{
 			auth.POST("/verify-token", authHandler.VerifyToken)
 		}
 
-		// Protected routes (butuh Backend JWT)
+		// Categories (public)
+		v1.GET("/categories", categoryHandler.GetAll)
+
+		// Products (public)
+		v1.GET("/products", productHandler.GetAll)
+		v1.GET("/products/:id", productHandler.GetByID)
+
+		// Protected routes
 		protected := v1.Group("")
 		protected.Use(middleware.AuthMiddleware())
 		{
-			products := protected.Group("/products")
+			// Cart
+			cart := protected.Group("/cart")
 			{
-				products.GET("", productHandler.GetAll)
-				products.GET("/:id", productHandler.GetByID)
+				cart.GET("", cartHandler.GetCart)
+				cart.POST("/items", cartHandler.AddItem)
+				cart.DELETE("/items/:itemId", cartHandler.RemoveItem)
+			}
 
-				// Admin only
-				adminProducts := products.Group("")
-				adminProducts.Use(middleware.AdminOnly())
-				{
-					adminProducts.POST("", productHandler.Create)
-					adminProducts.PUT("/:id", productHandler.Update)
-					adminProducts.DELETE("/:id", productHandler.Delete)
-				}
+			// Orders
+			orders := protected.Group("/orders")
+			{
+				orders.POST("", orderHandler.CreateOrder)
+				orders.GET("", orderHandler.GetMyOrders)
+			}
+
+			// Admin only
+			admin := protected.Group("")
+			admin.Use(middleware.AdminOnly())
+			{
+				admin.POST("/categories", categoryHandler.Create)
+				admin.POST("/products", productHandler.Create)
+				admin.PUT("/products/:id", productHandler.Update)
+				admin.DELETE("/products/:id", productHandler.Delete)
 			}
 		}
 	}
