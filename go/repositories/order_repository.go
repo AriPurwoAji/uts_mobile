@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"github.com/yourusername/go/config"
-	"github.com/yourusername/go/models"
+	"github.com/AriPurwoAji/gin-firebase-backend/config"
+	"github.com/AriPurwoAji/gin-firebase-backend/models"
 )
 
 type OrderRepository struct{}
