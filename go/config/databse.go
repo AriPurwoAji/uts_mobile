@@ -44,9 +44,16 @@ func InitDatabase() {
 	sqlDB.SetMaxIdleConns(10)
 
 	err = DB.AutoMigrate(
-		&models.User{},
-		&models.Product{},
-	)
+    &models.User{},
+    &models.Category{},
+    &models.Product{},
+    &models.ProductImage{},
+    &models.Review{},
+    &models.Cart{},
+    &models.CartItem{},
+    &models.Order{},
+    &models.OrderItem{},
+)
 	if err != nil {
 		log.Fatalf("AutoMigrate gagal: %v", err)
 	}
