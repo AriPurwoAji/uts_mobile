@@ -4,9 +4,9 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../category/presentation/category_provider.dart';
 import '../../../product/presentation/product_provider.dart';
 import '../../../cart/presentation/cart_provider.dart';
-import '../widgets/category_grid.dart';
+import '../widgets/category.grid.dart';
 import '../widgets/featured_product_card.dart';
-import '../../presentation/pages/cart_page.dart';
+import '../../../cart/presentation/pages/cart_page.dart';
 import '../../../product/presentation/pages/product_detail_page.dart';
 import '../../../category/presentation/pages/category_page.dart';
 

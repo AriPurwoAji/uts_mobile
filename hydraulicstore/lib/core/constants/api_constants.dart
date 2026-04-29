@@ -1,8 +1,9 @@
 class ApiConstants {
-  // Ganti sesuai IP lokal kamu saat development
-  // Emulator Android pakai: 10.0.2.2
-  // Device fisik pakai: IP laptop kamu (cek ipconfig/ifconfig)
   static const String baseUrl = 'http://10.0.2.2:8080/v1';
+
+  // ➕ Tambahkan dua baris ini
+  static const int connectTimeout = 5000;
+  static const int receiveTimeout = 5000;
 
   // Auth
   static const String verifyToken = '/auth/verify-token';
