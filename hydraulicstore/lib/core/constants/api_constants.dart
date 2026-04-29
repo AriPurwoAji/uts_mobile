@@ -1,15 +1,24 @@
 class ApiConstants {
-  // Ganti dengan IP address komputer kamu
-  // Cek IP dengan command: ipconfig
-  static const String baseUrl = 'http://192.168.0.117:8080/v1';
+  // Ganti sesuai IP lokal kamu saat development
+  // Emulator Android pakai: 10.0.2.2
+  // Device fisik pakai: IP laptop kamu (cek ipconfig/ifconfig)
+  static const String baseUrl = 'http://10.0.2.2:8080/v1';
 
-  // Auth endpoints
+  // Auth
   static const String verifyToken = '/auth/verify-token';
 
-  // Product endpoints
-  static const String products = '/products';
+  // Categories
+  static const String categories = '/categories';
 
-  // Timeout
-  static const int connectTimeout = 15000;
-  static const int receiveTimeout = 15000;
+  // Products
+  static const String products = '/products';
+  static String productById(int id) => '/products/$id';
+
+  // Cart
+  static const String cart = '/cart';
+  static const String cartItems = '/cart/items';
+  static String cartItemById(int id) => '/cart/items/$id';
+
+  // Orders
+  static const String orders = '/orders';
 }
