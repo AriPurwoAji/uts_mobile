@@ -1,0 +1,19 @@
+import 'package:dio/dio.dart';
+import '../../../core/constants/api_constants.dart';
+import '../../../core/services/dio_clients.dart';
+import '../domain/category_model.dart';
+
+class CategoryRepository {
+  final DioClient _dioClient;
+  CategoryRepository(this._dioClient);
+
+  Future<List<CategoryModel>> getCategories() async {
+    try {
+      final response = await _dioClient.dio.get(ApiConstants.categories);
+      final List data = response.data['data'];
+      return data.map((e) => CategoryModel.fromJson(e)).toList();
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'Gagal memuat kategori');
+    }
+  }
+}
