@@ -12,8 +12,6 @@ import 'features/product/presentation/product_provider.dart';
 import 'features/product/data/product_repository.dart';
 import 'features/cart/presentation/cart_provider.dart';
 import 'features/cart/data/cart_repository.dart';
-
-// Pages
 import 'features/auth/presentation/pages/login_page.dart';
 
 void main() async {
@@ -28,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final secureStorage = SecureStorage();
-    final dioClient     = DioClient(secureStorage);
+    final dioClient = DioClient();
 
     return MultiProvider(
       providers: [

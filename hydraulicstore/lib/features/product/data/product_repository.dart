@@ -13,7 +13,7 @@ class ProductRepository {
     String? category,
   }) async {
     try {
-      final response = await _dioClient.dio.get(
+      final response = await Dio().get(
         ApiConstants.products,
         queryParameters: {
           'page': page,
@@ -30,7 +30,7 @@ class ProductRepository {
 
   Future<ProductModel> getProductById(int id) async {
     try {
-      final response = await _dioClient.dio.get(ApiConstants.productById(id));
+      final response = await Dio().get(ApiConstants.productById(id));
       return ProductModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Produk tidak ditemukan');

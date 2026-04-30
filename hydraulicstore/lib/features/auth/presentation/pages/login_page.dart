@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../providers/auth_providers.dart';
-import '../../../dashboard/presentation/pages/home_page.dart';
+import '../../../home/presentation/pages/home_page.dart';
 import 'register_page.dart';
 import 'verify_email_page.dart';
 
@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
       if (success) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const DashboardPage()),
+          MaterialPageRoute(builder: (_) => const HomePage()),
         );
       } else if (auth.errorMessage.contains('belum diverifikasi')) {
         Navigator.pushReplacement(
@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
     if (success && mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const DashboardPage()),
+        MaterialPageRoute(builder: (_) => const HomePage()),
       );
     }
   }

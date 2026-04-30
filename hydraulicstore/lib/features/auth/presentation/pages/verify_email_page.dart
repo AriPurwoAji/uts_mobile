@@ -5,7 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../providers/auth_providers.dart';
 import 'login_page.dart';
 import '../../data/auth_repository_impl.dart';
-import '../../../dashboard/presentation/pages/home_page.dart';
+import '../../../home/presentation/pages/home_page.dart';
 
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({super.key});
@@ -16,7 +16,14 @@ class VerifyEmailPage extends StatefulWidget {
 
 class _VerifyEmailPageState extends State<VerifyEmailPage> {
   Timer? _timer;
-  final _authRepo = AuthRepositoryImpl();
+  late AuthRepositoryImpl _authRepo; // Gunakan late
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Ambil instance yang sudah dibuat di main.dart lewat Provider
+    _authRepo = context.read<AuthRepositoryImpl>();
+  }
 
   @override
   void initState() {
@@ -34,7 +41,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
           context.read<AuthProvider>().setAuthenticated();
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const DashboardPage()),
+            MaterialPageRoute(builder: (_) => const HomePage()),
           );
         }
       }
@@ -57,15 +64,15 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.mark_email_unread_outlined,
-                  size: 80, color: AppColors.primary),
+              Icon(
+                Icons.mark_email_unread_outlined,
+                size: 80,
+                color: AppColors.primary,
+              ),
               const SizedBox(height: 24),
               const Text(
                 'Verifikasi Email',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Text(
@@ -83,7 +90,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                   await context.read<AuthProvider>().resendVerificationEmail();
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Email verifikasi dikirim ulang')),
+                      const SnackBar(
+                        content: Text('Email verifikasi dikirim ulang'),
+                      ),
                     );
                   }
                 },

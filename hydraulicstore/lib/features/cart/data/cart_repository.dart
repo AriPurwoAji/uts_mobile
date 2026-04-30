@@ -9,7 +9,7 @@ class CartRepository {
 
   Future<CartModel> getCart() async {
     try {
-      final response = await _dioClient.dio.get(ApiConstants.cart);
+      final response = await Dio().get(ApiConstants.cart);
       return CartModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Gagal memuat cart');
@@ -18,7 +18,7 @@ class CartRepository {
 
   Future<CartModel> addItem(int productId, int quantity) async {
     try {
-      final response = await _dioClient.dio.post(
+      final response = await Dio().post(
         ApiConstants.cartItems,
         data: {'product_id': productId, 'quantity': quantity},
       );
@@ -30,7 +30,7 @@ class CartRepository {
 
   Future<void> removeItem(int itemId) async {
     try {
-      await _dioClient.dio.delete(ApiConstants.cartItemById(itemId));
+      await Dio().delete(ApiConstants.cartItemById(itemId));
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Gagal menghapus item');
     }

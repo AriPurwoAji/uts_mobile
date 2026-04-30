@@ -9,7 +9,7 @@ class CategoryRepository {
 
   Future<List<CategoryModel>> getCategories() async {
     try {
-      final response = await _dioClient.dio.get(ApiConstants.categories);
+      final response = await Dio().get(ApiConstants.categories);
       final List data = response.data['data'];
       return data.map((e) => CategoryModel.fromJson(e)).toList();
     } on DioException catch (e) {
