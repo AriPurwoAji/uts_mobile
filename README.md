@@ -1,6 +1,6 @@
 # Hydrau-Link App
 
-Nama : Ari Purwo Aji | Kelas : TI 23 SE M | NIM : 1123150126 | Link YouTube : (segera diupdate)
+Nama : Ari Purwo Aji | Kelas : TI 23 SE M | NIM : 1123150126 | Link YouTube : https://www.youtube.com/watch?v=ZlVxmwMHBx4
 
 ## Cara Menjalankan Aplikasi
 
