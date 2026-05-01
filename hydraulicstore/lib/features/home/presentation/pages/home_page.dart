@@ -7,7 +7,6 @@ import '../../../cart/presentation/cart_provider.dart';
 import '../widgets/category.grid.dart';
 import '../widgets/featured_product_card.dart';
 import '../../../cart/presentation/pages/cart_page.dart';
-import '../../../product/presentation/pages/product_detail_page.dart';
 import '../../../auth/presentation/providers/auth_providers.dart'; // ← tambah
 import '../../../auth/presentation/pages/login_pages.dart'; // ← tambah
 

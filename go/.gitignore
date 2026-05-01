@@ -4,3 +4,4 @@ firebase-service-account.json
 *.test
 /tmp
 /vendor
+go/hydraulic-store-firebase-adminsdk-fbsvc-1ad2cea0d0.json

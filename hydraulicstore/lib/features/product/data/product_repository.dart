@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import '../../../core/constants/api_constants.dart';
-import '../../../core/services/dio_clients.dart';
 import '../domain/product_model.dart';
 
 class ProductRepository {
