@@ -4,8 +4,8 @@ import '../../../core/services/dio_clients.dart';
 import '../domain/product_model.dart';
 
 class ProductRepository {
-  final DioClient _dioClient;
-  ProductRepository(this._dioClient);
+  final Dio dio;
+  ProductRepository(this.dio);
 
   Future<List<ProductModel>> getProducts({
     int page = 1,
@@ -13,7 +13,7 @@ class ProductRepository {
     String? category,
   }) async {
     try {
-      final response = await Dio().get(
+      final response = await dio.get(
         ApiConstants.products,
         queryParameters: {
           'page': page,
@@ -30,7 +30,7 @@ class ProductRepository {
 
   Future<ProductModel> getProductById(int id) async {
     try {
-      final response = await Dio().get(ApiConstants.productById(id));
+      final response = await dio.get(ApiConstants.productById(id));
       return ProductModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Produk tidak ditemukan');

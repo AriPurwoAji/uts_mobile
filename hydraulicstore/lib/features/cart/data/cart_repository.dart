@@ -4,12 +4,12 @@ import '../../../core/services/dio_clients.dart';
 import '../domain/cart_model.dart';
 
 class CartRepository {
-  final DioClient _dioClient;
-  CartRepository(this._dioClient);
+  final Dio dio;
+  CartRepository(this.dio);
 
   Future<CartModel> getCart() async {
     try {
-      final response = await Dio().get(ApiConstants.cart);
+      final response = await dio.get(ApiConstants.cart);
       return CartModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Gagal memuat cart');
@@ -18,7 +18,7 @@ class CartRepository {
 
   Future<CartModel> addItem(int productId, int quantity) async {
     try {
-      final response = await Dio().post(
+      final response = await dio.post(
         ApiConstants.cartItems,
         data: {'product_id': productId, 'quantity': quantity},
       );

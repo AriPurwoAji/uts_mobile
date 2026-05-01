@@ -36,23 +36,23 @@ class ProductModel {
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
-    id:          json['id'],
-    name:        json['name'] ?? '',
-    description: json['description'] ?? '',
-    price:       (json['price'] ?? 0).toDouble(),
-    stock:       json['stock'] ?? 0,
-    categoryId:  json['category_id'] ?? 0,
-    brand:       json['brand'] ?? '',
-    partNumber:  json['part_number'] ?? '',
-    imageUrl:    json['image_url'] ?? '',
-    isActive:    json['is_active'] ?? true,
-    flowRate:    json['flow_rate'] ?? '',
-    maxPressure: json['max_pressure'] ?? '',
-    mountType:   json['mount_type'] ?? '',
-    condition:   json['condition'] ?? 'New',
-    shaftType:   json['shaft_type'] ?? '',
-    portingType: json['porting_type'] ?? '',
-  );
+  id:          (json['id'] ?? 0) as int,        
+  name:        json['name'] ?? '',
+  description: json['description'] ?? '',
+  price:       (json['price'] ?? 0).toDouble(),
+  stock:       (json['stock'] ?? 0) as int,    
+  categoryId:  (json['category_id'] ?? 0) as int,
+  brand:       json['brand'] ?? '',
+  partNumber:  json['part_number'] ?? '',
+  imageUrl:    json['image_url'] ?? '',
+  isActive:    json['is_active'] ?? true,
+  flowRate:    json['flow_rate'] ?? '',
+  maxPressure: json['max_pressure'] ?? '',
+  mountType:   json['mount_type'] ?? '',
+  condition:   json['condition'] ?? 'New',
+  shaftType:   json['shaft_type'] ?? '',
+  portingType: json['porting_type'] ?? '',
+);
 
   // Format harga ke Rupiah
   String get formattedPrice {

@@ -7,7 +7,6 @@ import '../../../core/constants/api_constants.dart';
 class AuthRepositoryImpl {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  
 
   // Register dengan email & password
   Future<void> register(String name, String email, String password) async {
@@ -50,25 +49,9 @@ class AuthRepositoryImpl {
     await _verifyTokenToBackend();
   }
 
-  Future<void> loginAfterVerification() async {
-    final user = _firebaseAuth.currentUser;
-
-    if (user == null) {
-      throw Exception("User belum login");
-    }
-
-    // ambil token (ini yang nanti dipakai ke backend)
-    final token = await user.getIdToken();
-    print("TOKEN: $token");
-
-    // kalau mau kirim ke backend → di sini tempatnya
-  }
-
   // Cek apakah email sudah diverifikasi
   Future<bool> checkEmailVerified() async {
-    final user = _firebaseAuth.currentUser;
-    await user?.reload(); // penting!
-
+    await _firebaseAuth.currentUser?.reload();
     return _firebaseAuth.currentUser?.emailVerified ?? false;
   }
 
@@ -80,47 +63,22 @@ class AuthRepositoryImpl {
   // Verifikasi token ke backend
   Future<void> _verifyTokenToBackend() async {
     final idToken = await _firebaseAuth.currentUser?.getIdToken();
-    print("STEP 1: TOKEN ADA");
-
     if (idToken == null) throw Exception('Gagal mendapatkan Firebase token');
-
-    print("STEP 2: KIRIM KE BACKEND");
 
     final response = await DioClient.instance.post(
       ApiConstants.verifyToken,
       data: {'firebase_token': idToken},
     );
 
-    print("STEP 3: RESPONSE MASUK");
-    print(response.data);
-
     final accessToken = response.data['data']['access_token'];
-    await SecureStorage.saveToken(accessToken);
-
-    print("STEP 4: SELESAI");
-  }
-
-  Future<void> verifyAfterEmailVerified() async {
-    final user = _firebaseAuth.currentUser;
-
-    if (user == null) {
-      throw Exception('User tidak ditemukan');
-    }
-
-    await user.reload();
-
-    if (!user.emailVerified) {
-      throw Exception('Email belum diverifikasi');
-    }
-
-    await _verifyTokenToBackend();
+    await SecureStorageService.saveToken(accessToken);
   }
 
   // Logout
   Future<void> logout() async {
     await _firebaseAuth.signOut();
     await _googleSignIn.signOut();
-    await SecureStorage.clearAll();
+    await SecureStorageService.clearAll();
   }
 
   User? get currentUser => _firebaseAuth.currentUser;

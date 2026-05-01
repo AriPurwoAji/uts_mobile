@@ -4,12 +4,12 @@ import '../../../core/services/dio_clients.dart';
 import '../domain/category_model.dart';
 
 class CategoryRepository {
-  final DioClient _dioClient;
-  CategoryRepository(this._dioClient);
+  final Dio dio;
+  CategoryRepository(this.dio);
 
   Future<List<CategoryModel>> getCategories() async {
     try {
-      final response = await Dio().get(ApiConstants.categories);
+      final response = await dio.get(ApiConstants.categories);
       final List data = response.data['data'];
       return data.map((e) => CategoryModel.fromJson(e)).toList();
     } on DioException catch (e) {

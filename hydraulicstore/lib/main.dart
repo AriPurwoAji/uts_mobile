@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:dio/dio.dart'; // Tambahkan import ini
 import 'firebase_options.dart';
 import 'core/theme/app_theme.dart';
 import 'core/services/dio_clients.dart';
@@ -12,7 +13,7 @@ import 'features/product/presentation/product_provider.dart';
 import 'features/product/data/product_repository.dart';
 import 'features/cart/presentation/cart_provider.dart';
 import 'features/cart/data/cart_repository.dart';
-import 'features/auth/presentation/pages/login_page.dart';
+import 'features/auth/presentation/pages/login_pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,31 +26,43 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final secureStorage = SecureStorage();
-    final dioClient = DioClient();
+    // 1. Ambil instance Dio dari singleton yang kamu buat
+    final dio = DioClient.instance; 
 
     return MultiProvider(
       providers: [
-        // Auth — dari materi (tidak diubah)
+        // Daftarkan dio sebagai provider agar bisa dibaca oleh repository
+        Provider<Dio>.value(value: dio),
+
+        // Auth — tetap sama
         ChangeNotifierProvider(create: (_) => AuthProvider()),
 
-        // Category — BARU
-        ChangeNotifierProvider(create: (_) =>
-          CategoryProvider(CategoryRepository(dioClient))),
+        // Category — Gunakan instance dio
+        ChangeNotifierProvider(
+          create: (context) => CategoryProvider(
+            CategoryRepository(dio),
+          ),
+        ),
 
-        // Product — BARU
-        ChangeNotifierProvider(create: (_) =>
-          ProductProvider(ProductRepository(dioClient))),
+        // Product — Gunakan instance dio
+        ChangeNotifierProvider(
+          create: (context) => ProductProvider(
+            ProductRepository(dio),
+          ),
+        ),
 
-        // Cart — BARU
-        ChangeNotifierProvider(create: (_) =>
-          CartProvider(CartRepository(dioClient))),
+        // Cart — Gunakan instance dio
+        ChangeNotifierProvider(
+          create: (context) => CartProvider(
+            CartRepository(dio),
+          ),
+        ),
       ],
       child: MaterialApp(
         title: 'Hydrau-Link',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.theme,   // ← pakai theme baru
-        home: const LoginPage(), // ← tetap dari materi
+        theme: AppTheme.theme,
+        home: const LoginPage(),
       ),
     );
   }

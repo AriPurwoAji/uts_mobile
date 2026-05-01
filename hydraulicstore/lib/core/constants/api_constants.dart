@@ -1,5 +1,5 @@
 class ApiConstants {
-  static const String baseUrl = 'http://10.0.2.2:8080/v1';
+  static const String baseUrl = 'http://10.123.151.24:8080/v1';
 
   // ➕ Tambahkan dua baris ini
   static const int connectTimeout = 5000;

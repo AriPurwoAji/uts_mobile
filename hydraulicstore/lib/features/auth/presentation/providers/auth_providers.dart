@@ -1,109 +1,234 @@
 import 'package:flutter/material.dart';
-import '../../data/auth_repository_impl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import '../../../../core/services/dio_clients.dart';
+import '../../../../core/constants/api_constants.dart';
+import '../../../../core/services/secure_storage.dart';
+import 'package:dio/dio.dart';
 
-enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
+enum AuthStatus {
+  initial,
+  loading,
+  authenticated,
+  unauthenticated,
+  emailNotVerified,
+  error,
+}
 
 class AuthProvider extends ChangeNotifier {
-  final AuthRepositoryImpl _authRepo = AuthRepositoryImpl();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   AuthStatus _status = AuthStatus.initial;
-  String _errorMessage = '';
+  User? _firebaseUser;
+  String? _backendToken;
+  String? _errorMessage;
 
+  // ================= GETTER =================
   AuthStatus get status => _status;
-  String get errorMessage => _errorMessage;
+  User? get firebaseUser => _firebaseUser;
+  String? get backendToken => _backendToken;
+  String? get errorMessage => _errorMessage;
 
-  // Register
-  Future<bool> register(String name, String email, String password) async {
+  bool get isLoading => _status == AuthStatus.loading;
+  bool get isAuthenticated => _status == AuthStatus.authenticated;
+
+  // ================= HELPER =================
+  void _setLoading() {
     _status = AuthStatus.loading;
-    _errorMessage = '';
+    _errorMessage = null;
     notifyListeners();
+  }
 
+  void _setError(String message) {
+    _status = AuthStatus.error;
+    _errorMessage = message;
+    notifyListeners();
+  }
+
+  // ================= REGISTER =================
+  Future<bool> register({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    _setLoading();
     try {
-      await _authRepo.register(name, email, password);
-      _status = AuthStatus.unauthenticated;
+      final credential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      _firebaseUser = credential.user;
+
+      // set nama user
+      await _firebaseUser?.updateDisplayName(name);
+
+      // kirim email verifikasi
+      await _firebaseUser?.sendEmailVerification();
+
+      _status = AuthStatus.emailNotVerified;
       notifyListeners();
+
       return true;
     } catch (e) {
-      _status = AuthStatus.error;
-      _errorMessage = _parseError(e.toString());
-      notifyListeners();
+      _setError(e.toString());
       return false;
     }
   }
 
-  // Login dengan email
-  Future<bool> loginWithEmail(String email, String password) async {
-    _status = AuthStatus.loading;
-    _errorMessage = '';
-    notifyListeners();
-
+  // ================= LOGIN EMAIL =================
+  Future<bool> loginWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    _setLoading();
     try {
-      await _authRepo.loginWithEmail(email, password);
-      _status = AuthStatus.authenticated;
-      notifyListeners();
-      return true;
+      final credential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      _firebaseUser = credential.user;
+
+      // cek verifikasi email
+      if (!(_firebaseUser?.emailVerified ?? false)) {
+        _status = AuthStatus.emailNotVerified;
+        notifyListeners();
+        return false;
+      }
+
+      return await _verifyTokenToBackend();
     } catch (e) {
-      _status = AuthStatus.error;
-      _errorMessage = _parseError(e.toString());
-      notifyListeners();
+      _setError(e.toString());
       return false;
     }
   }
 
-  // Login dengan Google
-  Future<bool> loginWithGoogle() async {
-    _status = AuthStatus.loading;
-    _errorMessage = '';
-    notifyListeners();
-
+  // ================= CHECK EMAIL VERIFICATION =================
+  Future<bool> checkEmailVerification() async {
+    _setLoading();
     try {
-      await _authRepo.loginWithGoogle();
-      _status = AuthStatus.authenticated;
-      notifyListeners();
-      return true;
+      await _firebaseUser?.reload();
+      _firebaseUser = _auth.currentUser;
+
+      if (_firebaseUser?.emailVerified ?? false) {
+        return await _verifyTokenToBackend();
+      } else {
+        _status = AuthStatus.emailNotVerified;
+        notifyListeners();
+        return false;
+      }
     } catch (e) {
-      _status = AuthStatus.error;
-      _errorMessage = _parseError(e.toString());
-      notifyListeners();
+      _setError("Gagal cek verifikasi");
       return false;
     }
   }
 
-  // Cek email verified
-  Future<bool> checkEmailVerified() async {
-    return await _authRepo.checkEmailVerified();
-  }
-
-  // Kirim ulang email verifikasi
+  // ================= RESEND EMAIL VERIFICATION =================
   Future<void> resendVerificationEmail() async {
     try {
-      await _authRepo.resendVerificationEmail();
+      await _firebaseUser?.sendEmailVerification();
     } catch (e) {
-      _errorMessage = _parseError(e.toString());
-      notifyListeners();
+      _setError("Gagal kirim ulang email");
     }
   }
 
-  // Set authenticated setelah verify email
-  void setAuthenticated() {
+  // ================= LOGIN GOOGLE =================
+  Future<bool> loginWithGoogle() async {
+    _setLoading();
+    try {
+      final googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        _setError("Login dibatalkan");
+        return false;
+      }
+
+      final googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await _auth.signInWithCredential(credential);
+
+      _firebaseUser = userCredential.user;
+
+      return await _verifyTokenToBackend();
+    } catch (e) {
+      _setError(e.toString());
+      return false;
+    }
+  }
+
+  // ================= VERIFY TOKEN KE BACKEND =================
+  Future<bool> _verifyTokenToBackend() async {
+  try {
+    final firebaseToken = await _firebaseUser?.getIdToken(true); // ← tambah true agar token fresh
+
+    if (firebaseToken == null) {
+      _setError("Gagal mendapatkan Firebase token");
+      return false;
+    }
+
+    final response = await DioClient.instance.post(
+      ApiConstants.verifyToken,
+      data: {"firebase_token": firebaseToken},
+    );
+
+    final token = response.data['data']['access_token'];
+    await SecureStorageService.saveToken(token);
+
+    _backendToken = token;
     _status = AuthStatus.authenticated;
     notifyListeners();
-  }
+    return true;
 
-  // Logout
-  Future<void> logout() async {
-    await _authRepo.logout();
+  } on DioException catch (e) {
+    // ← tampilkan error spesifik dari Dio/backend
+    final msg = e.response?.data?['message'] 
+                ?? e.message 
+                ?? 'Koneksi ke server gagal';
+    _setError("Backend error: $msg");
+    return false;
+  } catch (e) {
+    _setError("Error: ${e.toString()}"); // ← tampilkan error asli
+    return false;
+  }
+}
+
+  // ================= CHECK LOGIN STATUS =================
+  Future<void> checkLoginStatus() async {
+  _setLoading();
+
+  try {
+    final token = await SecureStorageService.getToken();
+
+    if (token == null) {
+      _status = AuthStatus.unauthenticated;
+    } else {
+      _backendToken = token;
+      _status = AuthStatus.authenticated;
+    }
+  } catch (e) {
     _status = AuthStatus.unauthenticated;
-    notifyListeners();
   }
 
-  String _parseError(String error) {
-    if (error.contains('EMAIL_NOT_VERIFIED')) return 'Email belum diverifikasi';
-    if (error.contains('user-not-found')) return 'Email tidak ditemukan';
-    if (error.contains('wrong-password')) return 'Password salah';
-    if (error.contains('email-already-in-use')) return 'Email sudah digunakan';
-    if (error.contains('weak-password')) return 'Password terlalu lemah';
-    if (error.contains('invalid-email')) return 'Format email tidak valid';
-    return 'Terjadi kesalahan. Coba lagi.';
+  notifyListeners();
+}
+
+  // ================= LOGOUT =================
+  Future<void> logout() async {
+    await _auth.signOut();
+    await _googleSignIn.signOut();
+    await SecureStorageService.clearAll();
+
+    _firebaseUser = null;
+    _backendToken = null;
+    _status = AuthStatus.unauthenticated;
+
+    notifyListeners();
   }
 }
