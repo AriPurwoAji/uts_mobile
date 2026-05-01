@@ -65,6 +65,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/images/accesories.jpg
+    - assets/images/cylinder.jpg
+    - assets/images/fitting.jpg
+    - assets/images/hose.jpg
+    - assets/images/pump.jpg
+    - assets/images/valve.jpg
 
   # To add assets to your application, add an assets section, like this:
   # assets:

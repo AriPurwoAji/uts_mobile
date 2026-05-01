@@ -12,6 +12,61 @@ class FeaturedProductCard extends StatelessWidget {
     required this.onTap,
   });
 
+  // ── Helper: deteksi asset lokal vs URL ──────────
+  Widget _buildImage(String imageUrl) {
+    if (imageUrl.isEmpty) {
+      return Container(
+        color: AppTheme.lightGrey,
+        child: const Icon(
+          Icons.precision_manufacturing_outlined,
+          size: 48,
+          color: AppTheme.darkNavy,
+        ),
+      );
+    }
+
+    if (imageUrl.startsWith('assets/')) {
+      // Gambar dari asset lokal
+      return Image.asset(
+        imageUrl,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Container(
+          color: AppTheme.lightGrey,
+          child: const Icon(
+            Icons.precision_manufacturing_outlined,
+            size: 48,
+            color: AppTheme.darkNavy,
+          ),
+        ),
+      );
+    }
+
+    // Gambar dari URL internet
+    return Image.network(
+      imageUrl,
+      width: double.infinity,
+      fit: BoxFit.cover,
+      loadingBuilder: (_, child, progress) {
+        if (progress == null) return child;
+        return Container(
+          color: AppTheme.lightGrey,
+          child: const Center(
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        );
+      },
+      errorBuilder: (_, __, ___) => Container(
+        color: AppTheme.lightGrey,
+        child: const Icon(
+          Icons.precision_manufacturing_outlined,
+          size: 48,
+          color: AppTheme.darkNavy,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -23,79 +78,63 @@ class FeaturedProductCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: Colors.grey.shade200,
-              blurRadius: 8, offset: const Offset(0, 2)),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product Image
+            // ── Product Image ──────────────────────
             Expanded(
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(12)),
-                child: product.imageUrl.isNotEmpty
-                  ? Image.network(product.imageUrl,
-                      width: double.infinity, fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                        const Icon(Icons.image_not_supported, size: 50))
-                  : Container(
-                      color: AppTheme.lightGrey,
-                      child: const Icon(Icons.water_drop,
-                        size: 50, color: AppTheme.darkNavy)),
+                  top: Radius.circular(12),
+                ),
+                child: _buildImage(product.imageUrl), // ← pakai helper
               ),
             ),
 
-            // Product Info
+            // ── Product Info ───────────────────────
             Padding(
               padding: const EdgeInsets.all(8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Rating
-                  Row(
+                  const Row(
                     children: [
-                      const Icon(Icons.star,
+                      Icon(Icons.star,
                         color: AppTheme.starYellow, size: 14),
-                      const SizedBox(width: 2),
-                      const Text('4.8',
+                      SizedBox(width: 2),
+                      Text('4.8',
                         style: TextStyle(fontSize: 12)),
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Text(product.name,
+
+                  // Nama produk
+                  Text(
+                    product.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
                       color: AppTheme.darkNavy,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(product.formattedPrice,
-                        style: const TextStyle(
-                          fontSize: 13, fontWeight: FontWeight.bold,
-                          color: AppTheme.darkNavy,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryOrange,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Text('Add',
-                          style: TextStyle(
-                            color: Colors.white, fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
+
+                  // Harga — tanpa tombol Add
+                  Text(
+                    product.formattedPrice,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryOrange,
+                    ),
                   ),
                 ],
               ),
