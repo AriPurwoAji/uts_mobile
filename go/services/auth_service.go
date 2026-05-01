@@ -40,29 +40,47 @@ func (s *AuthService) VerifyFirebaseToken(firebaseToken string) (string, *models
 	email, _ := token.Claims["email"].(string)
 	name, _ := token.Claims["name"].(string)
 
-	// 4. Cari user di database, buat jika belum ada
-	user, err := s.userRepo.FindByFirebaseUID(uid)
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		now := time.Now().Unix()
-		user = &models.User{
-			FirebaseUID:   uid,
-			Email:         email,
-			Name:          name,
-			Role:          "user",
-			EmailVerified: true,
-			LastLoginAt:   &now,
-		}
-		if err := s.userRepo.Create(user); err != nil {
-			return "", nil, errors.New("gagal membuat user baru")
-		}
-	} else if err != nil {
-		return "", nil, errors.New("error mengambil data user")
-	} else {
-		now := time.Now().Unix()
-		user.LastLoginAt = &now
-		user.EmailVerified = true
-		s.userRepo.Update(user)
-	}
+	// 4. Cari user di database
+user, err := s.userRepo.FindByFirebaseUID(uid)
+
+if errors.Is(err, gorm.ErrRecordNotFound) {
+    // Coba cari by email dulu (user mungkin sudah ada dengan UID berbeda)
+    existingUser, emailErr := s.userRepo.FindByEmail(email)
+    
+    if emailErr == nil {
+        // User ditemukan by email → update firebase_uid-nya
+        existingUser.FirebaseUID    = uid
+        existingUser.EmailVerified  = true
+        now := time.Now().Unix()
+        existingUser.LastLoginAt    = &now
+        if err := s.userRepo.Update(existingUser); err != nil {
+            return "", nil, errors.New("gagal update user")
+        }
+        user = existingUser
+    } else {
+        // Benar-benar user baru → buat baru
+        now := time.Now().Unix()
+        user = &models.User{
+            FirebaseUID:   uid,
+            Email:         email,
+            Name:          name,
+            Role:          "user",
+            EmailVerified: true,
+            LastLoginAt:   &now,
+        }
+        if err := s.userRepo.Create(user); err != nil {
+            return "", nil, errors.New("gagal membuat user baru")
+        }
+    }
+} else if err != nil {
+    return "", nil, errors.New("error mengambil data user")
+} else {
+    // User sudah ada → update last login
+    now := time.Now().Unix()
+    user.LastLoginAt   = &now
+    user.EmailVerified = true
+    s.userRepo.Update(user)
+}
 
 	// 5. Generate Backend JWT Token
 	jwtToken, err := s.generateJWT(user)
