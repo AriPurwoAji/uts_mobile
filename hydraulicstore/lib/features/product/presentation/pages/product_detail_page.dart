@@ -33,7 +33,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ],
       ),
       body: Consumer<ProductProvider>(
-        builder: (_, provider, __) {
+        builder: (_, provider, _) {
           if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }

@@ -17,7 +17,7 @@ class ProductRepository {
         queryParameters: {
           'page': page,
           'limit': limit,
-          if (category != null) 'category': category,
+          'category': ?category,
         },
       );
       final List data = response.data['data'];

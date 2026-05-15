@@ -144,7 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 // Error message
                 Consumer<AuthProvider>(
-                  builder: (_, auth, __) {
+                  builder: (_, auth, _) {
                     if (auth.status == AuthStatus.error) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 16),
@@ -160,7 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 // Tombol Register
                 Consumer<AuthProvider>(
-                  builder: (_, auth, __) {
+                  builder: (_, auth, _) {
                     return SizedBox(
                       width: double.infinity,
                       height: 50,

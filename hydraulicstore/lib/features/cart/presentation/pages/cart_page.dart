@@ -24,7 +24,7 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('My Cart')),
       body: Consumer<CartProvider>(
-        builder: (_, provider, __) {
+        builder: (_, provider, _) {
           if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }

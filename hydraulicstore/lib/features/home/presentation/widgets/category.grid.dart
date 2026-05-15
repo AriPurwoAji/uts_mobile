@@ -22,7 +22,7 @@ class CategoryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<CategoryProvider>(
-      builder: (_, provider, __) {
+      builder: (_, provider, _) {
         if (provider.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }

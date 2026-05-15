@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           Consumer<CartProvider>(
-            builder: (_, cart, __) => Stack(
+            builder: (_, cart, _) => Stack(
               children: [
                 IconButton(
                   icon: const Icon(Icons.shopping_cart_outlined),
@@ -175,7 +175,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 12),
             Consumer<ProductProvider>(
-              builder: (_, provider, __) {
+              builder: (_, provider, _) {
                 if (provider.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }

@@ -174,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       // Error message
                       Consumer<AuthProvider>(
-                        builder: (_, auth, __) {
+                        builder: (_, auth, _) {
                           if (auth.status == AuthStatus.error) {
                             return Container(
                               margin: const EdgeInsets.only(bottom: 16),
@@ -205,7 +205,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       // Tombol Login
                       Consumer<AuthProvider>(
-                        builder: (_, auth, __) {
+                        builder: (_, auth, _) {
                           return SizedBox(
                             width: double.infinity,
                             height: 50,

@@ -63,7 +63,7 @@ class _CategoryPageState extends State<CategoryPage> {
                             ? Image.network(
                                 category.iconUrl,
                                 fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) =>
+                                errorBuilder: (_, _, _) =>
                                     const Icon(Icons.image_not_supported),
                               )
                             : const Icon(Icons.category),

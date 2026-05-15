@@ -31,7 +31,7 @@ class FeaturedProductCard extends StatelessWidget {
         imageUrl,
         width: double.infinity,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Container(
+        errorBuilder: (_, _, _) => Container(
           color: AppTheme.lightGrey,
           child: const Icon(
             Icons.precision_manufacturing_outlined,
@@ -56,7 +56,7 @@ class FeaturedProductCard extends StatelessWidget {
           ),
         );
       },
-      errorBuilder: (_, __, ___) => Container(
+      errorBuilder: (_, _, _) => Container(
         color: AppTheme.lightGrey,
         child: const Icon(
           Icons.precision_manufacturing_outlined,
