@@ -35,7 +35,7 @@ func main() {
 	products := []models.Product{
 		{
 			Name:        "Piston Pump PGH4 - High Pressure",
-			Price:       1250.00,
+			Price:       18500000,
 			Stock:       10,
 			CategoryID:  catPumps.ID,
 			Brand:       "Bosch Rexroth",
@@ -51,7 +51,7 @@ func main() {
 		},
 		{
 			Name:        "Directional Valve D1VW",
-			Price:       310.00,
+			Price:       4750000,
 			Stock:       25,
 			CategoryID:  catValves.ID,
 			Brand:       "Vickers",
@@ -67,7 +67,7 @@ func main() {
 		},
 		{
 			Name:        "Hydraulic Cylinder HC100",
-			Price:       580.00,
+			Price:       8200000,
 			Stock:       15,
 			CategoryID:  catCylinders.ID,
 			Brand:       "Parker",
@@ -83,7 +83,7 @@ func main() {
 		},
 		{
 			Name:        "High Pressure Hose HP12",
-			Price:       45.00,
+			Price:       350000,
 			Stock:       100,
 			CategoryID:  catHoses.ID,
 			Brand:       "Gates",
