@@ -7,8 +7,9 @@ import '../../../cart/presentation/cart_provider.dart';
 import '../widgets/category.grid.dart';
 import '../widgets/featured_product_card.dart';
 import '../../../cart/presentation/pages/cart_page.dart';
-import '../../../auth/presentation/providers/auth_providers.dart'; // ← tambah
-import '../../../auth/presentation/pages/login_pages.dart'; // ← tambah
+import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../auth/presentation/pages/login_pages.dart';
+import '../../../product/presentation/widgets/product_bottom_sheet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,38 +24,46 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    final categoryProvider = context.read<CategoryProvider>();
+    final productProvider = context.read<ProductProvider>();
+    final cartProvider = context.read<CartProvider>();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CategoryProvider>().fetchCategories();
-      context.read<ProductProvider>().fetchProducts();
-      context.read<CartProvider>().fetchCart();
+      categoryProvider.fetchCategories();
+      productProvider.fetchProducts();
+      cartProvider.fetchCart();
     });
   }
 
   // ── Fungsi logout ─────────────────────────────────
   Future<void> _logout() async {
+    final currentContext = context;
+    final authProvider = currentContext.read<AuthProvider>();
+    final navigator = Navigator.of(currentContext);
+
     // Tampilkan dialog konfirmasi dulu
     final confirm = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
+      context: currentContext,
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Keluar'),
         content: const Text('Apakah kamu yakin ingin keluar?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(dialogContext, false),
             child: const Text('Batal'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('Keluar', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
     );
 
-    if (confirm == true && mounted) {
-      await context.read<AuthProvider>().logout();
-      Navigator.pushAndRemoveUntil(
-        context,
+    if (!mounted) return;
+    if (confirm == true) {
+      await authProvider.logout();
+      navigator.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const LoginPage()),
         (route) => false, // hapus semua route sebelumnya
       );
@@ -194,7 +203,15 @@ class _HomePageState extends State<HomePage> {
                   itemCount: provider.featuredProducts.length,
                   itemBuilder: (_, index) {
                     final product = provider.featuredProducts[index];
-                    return FeaturedProductCard(product: product, onTap: () {});
+                    return FeaturedProductCard(
+                      product: product,
+                      onTap: () => showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (_) => ProductBottomSheet(product: product),
+                      ),
+                    );
                   },
                 );
               },
