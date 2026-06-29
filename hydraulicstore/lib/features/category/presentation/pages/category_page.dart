@@ -14,9 +14,8 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<CategoryProvider>(context, listen: false)
-            .fetchCategories());
+    final categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
+    Future.microtask(() => categoryProvider.fetchCategories());
   }
 
   @override

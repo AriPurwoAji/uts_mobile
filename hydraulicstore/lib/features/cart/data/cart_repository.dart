@@ -29,7 +29,7 @@ class CartRepository {
 
   Future<void> removeItem(int itemId) async {
     try {
-      await Dio().delete(ApiConstants.cartItemById(itemId));
+      await dio.delete(ApiConstants.cartItemById(itemId));
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Gagal menghapus item');
     }

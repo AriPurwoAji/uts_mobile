@@ -221,7 +221,16 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
+        onTap: (i) {
+          if (i == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CartPage()),
+            );
+            return;
+          }
+          setState(() => _currentIndex = i);
+        },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppTheme.primaryOrange,
         unselectedItemColor: Colors.grey,

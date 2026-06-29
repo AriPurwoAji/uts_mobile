@@ -140,33 +140,48 @@ class _ProductBottomSheetState extends State<ProductBottomSheet> {
               const SizedBox(width: 12),
               Expanded(
                 child: Consumer<CartProvider>(
-                  builder: (context3, cart, child) => ElevatedButton(
-                    onPressed: cart.isLoading
-                        ? null
-                        : () async {
-                            await context
-                                .read<CartProvider>()
-                                .addToCart(product.id, _qty);
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      '${product.name} ditambahkan ke keranjang'),
-                                  backgroundColor: AppTheme.primaryOrange,
-                                ),
-                              );
-                            }
-                          },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: cart.isLoading
-                        ? const SizedBox(
-                            height: 20, width: 20,
-                            child: CircularProgressIndicator(
-                                color: Colors.white, strokeWidth: 2))
-                        : const Text('Tambah ke Keranjang'),
+                  builder: (context3, cart, child) => Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ElevatedButton(
+                        onPressed: cart.isLoading
+                            ? null
+                            : () async {
+                                await context
+                                    .read<CartProvider>()
+                                    .addToCart(product.id, _qty);
+                                if (!context.mounted) return;
+                                final error = context.read<CartProvider>().error;
+                                if (error != null) return;
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        '${product.name} ditambahkan ke keranjang'),
+                                    backgroundColor: AppTheme.primaryOrange,
+                                  ),
+                                );
+                              },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          minimumSize: const Size(double.infinity, 0),
+                        ),
+                        child: cart.isLoading
+                            ? const SizedBox(
+                                height: 20, width: 20,
+                                child: CircularProgressIndicator(
+                                    color: Colors.white, strokeWidth: 2))
+                            : const Text('Tambah ke Keranjang'),
+                      ),
+                      if (cart.error != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Text(cart.error!,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
+                              textAlign: TextAlign.center),
+                        ),
+                    ],
                   ),
                 ),
               ),

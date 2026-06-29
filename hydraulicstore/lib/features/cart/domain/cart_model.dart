@@ -18,7 +18,7 @@ class CartItemModel {
   });
 
   factory CartItemModel.fromJson(Map<String, dynamic> json) => CartItemModel(
-    id:           json['id'],
+    id:           json['ID'] ?? json['id'],
     cartId:       json['cart_id'],
     productId:    json['product_id'],
     productName:  json['product']?['name'] ?? '',
@@ -42,7 +42,7 @@ class CartModel {
   });
 
   factory CartModel.fromJson(Map<String, dynamic> json) => CartModel(
-    id:     json['id'],
+    id:     json['ID'] ?? json['id'],
     userId: json['user_id'],
     items:  (json['items'] as List? ?? [])
                 .map((e) => CartItemModel.fromJson(e))

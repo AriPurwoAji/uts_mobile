@@ -80,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                          color: const Color.fromRGBO(255, 255, 255, 0.1),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Icon(Icons.water_drop,

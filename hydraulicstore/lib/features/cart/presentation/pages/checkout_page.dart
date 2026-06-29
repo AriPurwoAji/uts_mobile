@@ -17,14 +17,10 @@ class CheckoutPage extends StatefulWidget {
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
-  final _addressController = TextEditingController();
-  final _noteController = TextEditingController();
   String _paymentMethod = 'dkg';
 
   @override
   void dispose() {
-    _addressController.dispose();
-    _noteController.dispose();
     super.dispose();
   }
 
@@ -41,13 +37,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
       final uri = Uri.parse(
         'dkg://checkout?store=Hydraulic+Store&order=$orderId&amount=${widget.total.toStringAsFixed(0)}',
       );
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri);
-      } else {
+      try {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (_) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('App Dompet Kampus Global tidak ditemukan'),
+              content: Text('App E-Money tidak ditemukan. Pastikan sudah ter-install.'),
               backgroundColor: Colors.red,
             ),
           );
@@ -158,66 +154,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
             const SizedBox(height: 20),
 
-            // Alamat Pengiriman
-            const Text('Alamat Pengiriman',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.darkNavy,
-                )),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _addressController,
-              maxLines: 3,
-              decoration: InputDecoration(
-                hintText: 'Masukkan alamat lengkap',
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.grey.shade300)),
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.grey.shade300)),
-                focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                        color: AppTheme.primaryOrange, width: 2)),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Catatan
-            const Text('Catatan',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.darkNavy,
-                )),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _noteController,
-              maxLines: 2,
-              decoration: InputDecoration(
-                hintText: 'Catatan opsional',
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.grey.shade300)),
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.grey.shade300)),
-                focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                        color: AppTheme.primaryOrange, width: 2)),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
             // Metode Pembayaran
             const Text('Metode Pembayaran',
                 style: TextStyle(
@@ -228,8 +164,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
             const SizedBox(height: 10),
             _paymentOption(
               value: 'dkg',
-              title: 'Dompet Kampus Global',
-              subtitle: 'Bayar via Dompet Kampus Global',
+              title: 'E-Money',
+              subtitle: 'Bayar via aplikasi E-Money',
               icon: Icons.account_balance_wallet_outlined,
             ),
             const SizedBox(height: 8),
@@ -263,7 +199,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
                 child: Text(
                   _paymentMethod == 'dkg'
-                      ? 'Bayar dengan Dompet Kampus Global'
+                      ? 'Bayar dengan E-Money'
                       : 'Konfirmasi Pesanan',
                   style: const TextStyle(
                       fontSize: 15, fontWeight: FontWeight.bold),
