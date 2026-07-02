@@ -14,7 +14,7 @@ Aplikasi ini menggunakan Firebase Authentication untuk login email & Google, men
 
 | Nama Repository | Lokasi / URL |
 | --- | --- |
-| Hydrau-Link App | `c:\androidlanjutan\uts` |
+| E-Commerce (Hydrau-Link App) | https://github.com/AriPurwoAji/uts_mobile |
 | Dompet Kampus Global (E-Money) | https://github.com/AriPurwoAji/dompet-kampus-global |
 
 ## Ringkasan Proyek
