@@ -163,3 +163,8 @@ Saat metode pembayaran `E-Money` dipilih, aplikasi akan mencoba membuka `dkg://c
 - Login Flutter menggunakan Firebase Auth dan backend hanya melakukan verifikasi token Firebase.
 - Backend mengeluarkan JWT akses agar endpoint protected dapat diakses.
 - Jika aplikasi E-Money tidak terpasang, checkout akan gagal dengan notifikasi.
+
+## Demo Video
+
+Lihat demo aplikasi di YouTube:
+https://www.youtube.com/watch?v=ZlVxmwMHBx4
